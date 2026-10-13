@@ -1,0 +1,137 @@
+{
+  "parametres": {
+    "router": "http://localhost:8000",
+    "victim": "globalshop-node-europe",
+    "workers": 8,
+    "duration": 45,
+    "kill_at": 8,
+    "restart_at": 28,
+    "stock": 100000,
+    "product_region": "amerique",
+    "client_retries": 6,
+    "request_timeout": 30,
+    "no_kill": false
+  },
+  "evenements": [
+    {
+      "t": 9.42,
+      "evenement": "KILL",
+      "detail": "globalshop-node-europe rc=0 "
+    },
+    {
+      "t": 29.47,
+      "evenement": "RESTART",
+      "detail": "globalshop-node-europe rc=0 "
+    },
+    {
+      "t": 47.17,
+      "evenement": "FIN_CHARGE",
+      "detail": ""
+    },
+    {
+      "t": 47.26,
+      "evenement": "CLUSTER_COMPLET",
+      "detail": "{'afrique': 'up', 'europe': 'up', 'amerique': 'up', 'asie': 'up'}"
+    }
+  ],
+  "commandes_confirmees": 181,
+  "commandes_refusees": 0,
+  "commandes_issue_incertaine": 0,
+  "dont_appliquees_en_base": 0,
+  "commandes_confirmees_perdues": 0,
+  "tentatives_rejouees_total": 0,
+  "plus_long_intervalle_sans_succes_s": 1.16,
+  "intervalle_commence_a_t_s": 6.03,
+  "latence_succes_s": {
+    "p50": 0.375,
+    "p95": 10.009,
+    "max": 27.264
+  },
+  "debit_par_tranche_5s": [
+    {
+      "debut_s": 0,
+      "commandes_ok": 9
+    },
+    {
+      "debut_s": 5,
+      "commandes_ok": 13
+    },
+    {
+      "debut_s": 10,
+      "commandes_ok": 20
+    },
+    {
+      "debut_s": 15,
+      "commandes_ok": 34
+    },
+    {
+      "debut_s": 20,
+      "commandes_ok": 35
+    },
+    {
+      "debut_s": 25,
+      "commandes_ok": 14
+    },
+    {
+      "debut_s": 30,
+      "commandes_ok": 14
+    },
+    {
+      "debut_s": 35,
+      "commandes_ok": 11
+    },
+    {
+      "debut_s": 40,
+      "commandes_ok": 22
+    },
+    {
+      "debut_s": 45,
+      "commandes_ok": 9
+    }
+  ],
+  "audit_base": {
+    "stock_restant": 99819,
+    "quantite_vendue": 181,
+    "nb_commandes": 181,
+    "meta": {
+      "noeud_passerelle": "amerique",
+      "tentatives": 1,
+      "conflits_rejoues": 0,
+      "bascules_noeud": 0
+    }
+  },
+  "noeuds_finaux": [
+    {
+      "node_id": 1,
+      "adresse": "node-afrique:26257",
+      "localite": "region=afrique",
+      "vivant": true
+    },
+    {
+      "node_id": 2,
+      "adresse": "node-asie:26257",
+      "localite": "region=asie",
+      "vivant": true
+    },
+    {
+      "node_id": 3,
+      "adresse": "node-amerique:26257",
+      "localite": "region=amerique",
+      "vivant": true
+    },
+    {
+      "node_id": 4,
+      "adresse": "node-europe:26257",
+      "localite": "region=europe",
+      "vivant": true
+    }
+  ],
+  "verifications": {
+    "aucune commande confirmee perdue": true,
+    "stock_restant + vendu == stock_initial": true,
+    "quantite_vendue == commandes presentes en base": true,
+    "stock jamais negatif": true,
+    "noeud tue de retour dans le cluster": true
+  },
+  "succes": true
+}

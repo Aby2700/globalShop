@@ -1,0 +1,49 @@
+{
+  "parametres": {
+    "router": "http://localhost:8000",
+    "requests": 100,
+    "stock": 30,
+    "product_region": "europe"
+  },
+  "produit": {
+    "id": "f1e161cf-1242-4beb-8d96-5a74b6afb1e8",
+    "region": "europe"
+  },
+  "duree_totale_s": 29.739,
+  "debit_req_par_s": 3.4,
+  "achats_reussis_201": 30,
+  "refus_rupture_409": 70,
+  "autres_erreurs": 0,
+  "conflits_serialisation_rejoues": 116,
+  "latence_s": {
+    "p50": 28.614,
+    "p95": 29.405,
+    "max": 29.667
+  },
+  "reussis_par_region_client": {
+    "afrique": 6,
+    "europe": 3,
+    "amerique": 15,
+    "asie": 6
+  },
+  "audit_base": {
+    "stock_restant": 0,
+    "quantite_vendue": 30,
+    "nb_commandes": 30,
+    "meta": {
+      "noeud_passerelle": "europe",
+      "tentatives": 1,
+      "conflits_rejoues": 0,
+      "bascules_noeud": 0
+    }
+  },
+  "verifications": {
+    "achats_reussis == stock_initial": true,
+    "stock_final >= 0": true,
+    "stock_final == max(stock - requetes, 0)": true,
+    "stock_restant + vendu == stock_initial": true,
+    "quantite_vendue == achats_reussis": true,
+    "aucune erreur serveur": true
+  },
+  "succes": true
+}

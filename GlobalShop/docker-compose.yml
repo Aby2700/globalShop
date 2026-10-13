@@ -1,0 +1,82 @@
+name: globalshop
+
+# Cluster CockroachDB à 4 nœuds (un par région) + routeur applicatif.
+# Démarrage : docker compose up -d --build
+# La version de l'image peut être changée : COCKROACH_VERSION=v24.1.0 docker compose up -d
+
+x-crdb: &crdb
+  image: cockroachdb/cockroach:${COCKROACH_VERSION:-v24.1.0}
+
+services:
+  node-afrique:
+    <<: *crdb
+    container_name: globalshop-node-afrique
+    hostname: node-afrique
+    command: >
+      start --insecure --join=node-afrique:26257,node-europe:26257,node-amerique:26257,node-asie:26257
+      --advertise-addr=node-afrique:26257 --locality=region=afrique
+      --cache=128MiB --max-sql-memory=128MiB
+    ports: ["26257:26257", "8080:8080"]
+    volumes: ["data-afrique:/cockroach/cockroach-data"]
+
+  node-europe:
+    <<: *crdb
+    container_name: globalshop-node-europe
+    hostname: node-europe
+    command: >
+      start --insecure --join=node-afrique:26257,node-europe:26257,node-amerique:26257,node-asie:26257
+      --advertise-addr=node-europe:26257 --locality=region=europe
+      --cache=128MiB --max-sql-memory=128MiB
+    ports: ["26258:26257", "8081:8080"]
+    volumes: ["data-europe:/cockroach/cockroach-data"]
+
+  node-amerique:
+    <<: *crdb
+    container_name: globalshop-node-amerique
+    hostname: node-amerique
+    command: >
+      start --insecure --join=node-afrique:26257,node-europe:26257,node-amerique:26257,node-asie:26257
+      --advertise-addr=node-amerique:26257 --locality=region=amerique
+      --cache=128MiB --max-sql-memory=128MiB
+    ports: ["26259:26257", "8082:8080"]
+    volumes: ["data-amerique:/cockroach/cockroach-data"]
+
+  node-asie:
+    <<: *crdb
+    container_name: globalshop-node-asie
+    hostname: node-asie
+    command: >
+      start --insecure --join=node-afrique:26257,node-europe:26257,node-amerique:26257,node-asie:26257
+      --advertise-addr=node-asie:26257 --locality=region=asie
+      --cache=128MiB --max-sql-memory=128MiB
+    ports: ["26260:26257", "8083:8080"]
+    volumes: ["data-asie:/cockroach/cockroach-data"]
+
+  # Initialise le cluster (une seule fois) et applique le schéma, puis s'arrête.
+  init:
+    <<: *crdb
+    container_name: globalshop-init
+    depends_on: [node-afrique, node-europe, node-amerique, node-asie]
+    restart: "no"
+    entrypoint: ["/bin/bash", "/init.sh"]
+    volumes:
+      - ./sql/schema.sql:/schema.sql:ro
+      - ./sql/splits.sql:/splits.sql:ro
+      - ./sql/init.sh:/init.sh:ro
+
+  # Routeur / coordinateur : oriente chaque requête vers le nœud de la région du client.
+  router:
+    build: ./router
+    container_name: globalshop-router
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      NODES: "afrique=node-afrique:26257,europe=node-europe:26257,amerique=node-amerique:26257,asie=node-asie:26257"
+    ports: ["8000:8000"]
+
+volumes:
+  data-afrique:
+  data-europe:
+  data-amerique:
+  data-asie:
